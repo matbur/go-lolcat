@@ -1,3 +1,3 @@
 #!/bin/bash
 
-go build && cat mono | ./go-lolcat
+go build -o lolcat && cat mono | ./lolcat
