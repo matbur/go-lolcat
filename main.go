@@ -2,16 +2,18 @@ package main
 
 import (
 	"os"
-	"fmt"
+	"io"
 )
 
 func main() {
-	buff := createBuffer(128)
-	n, _ := os.Stdin.Read(buff.tab)
-	for n > 0 {
-		fmt.Println(n)
+	buff := createBuffer(1)
+	_, err := os.Stdin.Read(buff.tab)
+	for err == nil {
 		buff.print()
 		buff.clear()
-		n, _ = os.Stdin.Read(buff.tab)
+		_, err = os.Stdin.Read(buff.tab)
+	}
+	if err != io.EOF {
+		panic(err)
 	}
 }

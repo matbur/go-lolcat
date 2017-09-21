@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"log"
+	"os"
 )
 
 type Buffer struct {
@@ -22,9 +21,5 @@ func (self *Buffer) clear() {
 }
 
 func (self *Buffer) print() {
-	log.Println("Buffer")
-	for i, v := range self.tab {
-		fmt.Printf("%d) |%v|\n", i, string(v))
-	}
-	//fmt.Println(string(self.tab))
+	os.Stdout.Write(self.tab)
 }
