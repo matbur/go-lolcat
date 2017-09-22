@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"math"
+	"time"
 )
 
 type LolCat struct {
@@ -57,16 +58,36 @@ func (self *LolCat) read() {
 }
 
 func (self *LolCat) cat() {
+	if self.animate {
+		self.output.WriteString("\x1b[?25l")
+	}
 	for _, v := range self.tab {
 		self.num++
 		self.printLine(v)
+	}
+	if self.animate {
+		self.output.WriteString("\x1b[?25h")
 	}
 }
 
 func (self *LolCat) printLine(line string) {
 	line = line[:len(line)-1]
-	self.printLinePlain(line)
+	if self.animate {
+		self.printLineAni(line)
+	} else {
+		self.printLinePlain(line)
+	}
 	self.output.WriteString("\n")
+}
+
+func (self *LolCat) printLineAni(line string) {
+	for i := 1; i < self.duration; i++ {
+		self.output.WriteString(fmt.Sprintf("\x1b[%dD", len(line)))
+
+		self.num += int(self.spread)
+		self.printLinePlain(line)
+		time.Sleep(time.Duration(1000./self.speed) * time.Millisecond)
+	}
 }
 
 func (self *LolCat) printLinePlain(line string) {
