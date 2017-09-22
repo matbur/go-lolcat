@@ -7,28 +7,32 @@ import (
 	"math"
 )
 
-var options = map[string]interface{}{
-	"spread":   3.,
-	"freq":     .1,
-	"seed":     42,
-	"animate":  false,
-	"duration": 12,
-	"speed":    20.,
-	"force":    false,
-}
-
 type LolCat struct {
-	input  *os.File
-	output *os.File
-	tab    [][]byte
-	num    int
+	input    *os.File
+	output   *os.File
+	tab      []string
+	num      int
+	freq     float64
+	spread   float64
+	seed     int
+	animate  bool
+	duration int
+	speed    float64
+	force    bool
 }
 
 func CreateLolCat(num int) LolCat {
 	lc := LolCat{
-		input:  os.Stdin,
-		output: os.Stdout,
-		num:    num,
+		input:    os.Stdin,
+		output:   os.Stdout,
+		num:      num,
+		freq:     .1,
+		spread:   3.,
+		seed:     42.,
+		animate:  false,
+		duration: 12,
+		speed:    20.,
+		force:    false,
 	}
 	lc.read()
 	lc.cat()
@@ -41,12 +45,12 @@ func (self *LolCat) read() {
 	var (
 		err  error
 		line []byte
-		tab  [][]byte
+		tab  []string
 	)
 	for err == nil {
 		line, err = buff.ReadBytes('\n')
 		if line != nil {
-			tab = append(tab, line)
+			tab = append(tab, string(line))
 		}
 	}
 	self.tab = tab
@@ -59,20 +63,20 @@ func (self *LolCat) cat() {
 	}
 }
 
-func (self *LolCat) printLine(line []byte) {
+func (self *LolCat) printLine(line string) {
 	line = line[:len(line)-1]
 	self.printLinePlain(line)
-	self.output.Write([]byte("\n"))
+	self.output.WriteString("\n")
 }
 
-func (self *LolCat) printLinePlain(line []byte) {
+func (self *LolCat) printLinePlain(line string) {
 	for i, v := range line {
 		r, g, b := self.rainbow(
-			options["freq"].(float64),
-			float64(self.num)+float64(i)/options["spread"].(float64),
+			self.freq,
+			float64(self.num)+float64(i)/self.spread,
 		)
-		self.output.Write(self.wrap(self.ansi(r, g, b)))
-		self.output.Write([]byte{v})
+		self.output.WriteString(self.wrap(self.ansi(r, g, b)))
+		self.output.WriteString(string(v))
 	}
 }
 
@@ -83,7 +87,7 @@ func (self *LolCat) rainbow(freq, i float64) (r, g, b float64) {
 	return r, g, b
 }
 
-func (self *LolCat) ansi(r float64, g float64, b float64) string {
+func (self *LolCat) ansi(r, g, b float64) string {
 	grayPossible := true
 	gray := true
 	sep := 2.5
@@ -110,6 +114,6 @@ func (self *LolCat) ansi(r float64, g float64, b float64) string {
 	return fmt.Sprintf("38;5;%d", color)
 }
 
-func (self *LolCat) wrap(codes string) []byte {
-	return []byte(fmt.Sprintf("\x1b[%sm", codes))
+func (self *LolCat) wrap(codes string) string {
+	return fmt.Sprintf("\x1b[%sm", codes)
 }
