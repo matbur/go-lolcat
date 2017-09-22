@@ -1,6 +1,6 @@
 Usage: lolcat.py [<options>] [file ...]
 
-Options:
+Options ąę:
   -h, --help            show this help message and exit
   -p SPREAD, --spread=SPREAD
                         Rainbow spread
