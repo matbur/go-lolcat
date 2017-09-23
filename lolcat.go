@@ -1,39 +1,27 @@
 package main
 
 import (
-	"os"
 	"bytes"
 	"fmt"
 	"math"
+	"os"
 	"time"
 )
 
 type LolCat struct {
-	input    *os.File
-	output   *os.File
-	tab      []string
-	num      int
-	freq     float64
-	spread   float64
-	seed     int
-	animate  bool
-	duration int
-	speed    float64
-	force    bool
+	input  *os.File
+	output *os.File
+	tab    []string
+	num    int
+	opts   Opts
 }
 
-func CreateLolCat(num int) LolCat {
+func CreateLolCat(opts Opts) LolCat {
 	lc := LolCat{
-		input:    os.Stdin,
-		output:   os.Stdout,
-		num:      num,
-		freq:     .1,
-		spread:   3.,
-		seed:     42.,
-		animate:  false,
-		duration: 12,
-		speed:    20.,
-		force:    false,
+		input:  os.Stdin,
+		output: os.Stdout,
+		opts:   opts,
+		num:    0,
 	}
 	lc.read()
 	lc.cat()
@@ -58,21 +46,21 @@ func (self *LolCat) read() {
 }
 
 func (self *LolCat) cat() {
-	if self.animate {
+	if self.opts.Animate {
 		self.output.WriteString("\x1b[?25l")
 	}
 	for _, v := range self.tab {
 		self.num++
 		self.printLine(v)
 	}
-	if self.animate {
+	if self.opts.Animate {
 		self.output.WriteString("\x1b[?25h")
 	}
 }
 
 func (self *LolCat) printLine(line string) {
 	line = line[:len(line)-1]
-	if self.animate {
+	if self.opts.Animate {
 		self.printLineAni(line)
 	} else {
 		self.printLinePlain(line)
@@ -81,20 +69,20 @@ func (self *LolCat) printLine(line string) {
 }
 
 func (self *LolCat) printLineAni(line string) {
-	for i := 1; i < self.duration; i++ {
+	for i := 1; i < self.opts.Duration; i++ {
 		self.output.WriteString(fmt.Sprintf("\x1b[%dD", len(line)))
 
-		self.num += int(self.spread)
+		self.num += int(self.opts.Spread)
 		self.printLinePlain(line)
-		time.Sleep(time.Duration(1000./self.speed) * time.Millisecond)
+		time.Sleep(time.Duration(1000./self.opts.Speed) * time.Millisecond)
 	}
 }
 
 func (self *LolCat) printLinePlain(line string) {
 	for i, v := range line {
 		r, g, b := self.rainbow(
-			self.freq,
-			float64(self.num)+float64(i)/self.spread,
+			self.opts.Freq,
+			float64(self.num)+float64(i)/self.opts.Spread,
 		)
 		self.output.WriteString(self.wrap(self.ansi(r, g, b)))
 		self.output.WriteString(string(v))
