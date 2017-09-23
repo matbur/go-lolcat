@@ -12,5 +12,5 @@ build:
 	docker run --rm -v $$PWD:/app $(IMG_NAME)
 	@echo "App built"
 
-build-container:
+build-image:
 	docker build -t $(IMG_NAME) .

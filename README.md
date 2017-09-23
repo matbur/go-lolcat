@@ -10,22 +10,22 @@ LolCat written in Golang based on Python version linked below.
 
 ### Installation:
 ```
-go build -o lolcat
+go build -o lolcat ./src
 ```
 
 ### Running:
 ```
-cat main.go | ./lolcat
+./lolcat -h | ./lolcat
 ```
 
 ## Usage in Docker:
 
 ### Building an image:
 ```
-docker build -t lolcat .
+make build-image
 ```
 
 ### Running container:
 ```
-docker run --rm lolcat
+make
 ```
