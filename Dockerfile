@@ -1,6 +1,5 @@
-FROM golang:alpine
+FROM golang
 
 WORKDIR /app
-COPY . /app
-RUN go build -o lolcat
-CMD cat main.go | ./lolcat
+RUN go get github.com/jessevdk/go-flags
+CMD go build -o lolcat

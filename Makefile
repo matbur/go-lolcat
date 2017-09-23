@@ -1,8 +1,16 @@
+IMG_NAME = "lolcat_img"
 BIN_NAME = "lolcat"
 
 run: build
-	@cat mono | ./$(BIN_NAME)
+	@echo
+	@echo "Running app..."
+	./$(BIN_NAME) -h | ./$(BIN_NAME)
 
 build:
-	@docker run --rm -v $$PWD:/app -w /app golang:alpine \
-		go build -o $(BIN_NAME)
+	@echo
+	@echo "Building app..."
+	docker run --rm -v $$PWD:/app $(IMG_NAME)
+	@echo "App built"
+
+build-container:
+	docker build -t $(IMG_NAME) .
