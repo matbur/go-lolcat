@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"math"
+	"math/rand"
 	"os"
 	"time"
 )
@@ -16,16 +17,17 @@ type LolCat struct {
 	opts   Opts
 }
 
-func CreateLolCat(opts Opts) LolCat {
+func runLolCat(file *os.File, opts Opts) {
 	lc := LolCat{
-		input:  os.Stdin,
+		input:  file,
 		output: os.Stdout,
 		opts:   opts,
-		num:    0,
+	}
+	if opts.Seed == 0 {
+		lc.num = rand.Int() % 256
 	}
 	lc.read()
 	lc.cat()
-	return lc
 }
 
 func (self *LolCat) read() {

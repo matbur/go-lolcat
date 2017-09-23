@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"math/rand"
 	"os"
 	"time"
@@ -28,6 +27,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	log.Println(args)
-	CreateLolCat(opts)
+	if len(args) == 1 {
+		runLolCat(os.Stdin, opts)
+		return
+	}
+
+	for _, v := range args[1:] {
+		file, err := os.Open(v)
+		if err == nil {
+			runLolCat(file, opts)
+		}
+	}
 }
